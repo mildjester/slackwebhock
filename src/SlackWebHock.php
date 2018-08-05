@@ -53,17 +53,18 @@ class SlackWebHock {
 		try{
 			$postData = new \stdClass();
 			$postData->channel = $to;
-			$postData->username = self::$username;
-			$postData->icon_emoji = self::$emoji;
-			if (isset(self::$color) && strlen(self::$color) > 0) {
+			$postData->username = defined('MJ_SLACK_NAME') ? MJ_SLACK_NAME : self::$username;
+			$postData->icon_emoji = defined('MJ_SLACK_EMOJI') ? MJ_SLACK_EMOJI : self::$emoji;
+			$slackBotColor = defined('MJ_SLACK_COLOR') ? MJ_SLACK_COLOR : self::$color;
+			if (isset($slackBotColor) && strlen($slackBotColor) > 0) {
 				$attachment = new \stdClass();
-				$attachment->color = self::$color;
+				$attachment->color = $slackBotColor;
 				$attachment->text = $text;
 				$postData->attachments = [$attachment];
 			} else {
 				$postData->text = $text;
 			}
-			$ch = curl_init(self::$url);
+			$ch = curl_init(defined('MJ_SLACK_URL') ? MJ_SLACK_URL : self::$url);
 			curl_setopt($ch, CURLOPT_POST, true);
 			curl_setopt($ch, CURLOPT_USERAGENT, $ua);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, 'payload='.json_encode($postData));
